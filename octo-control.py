@@ -11,14 +11,17 @@ class OctoprintAPI:
     This class is an interface for the Octoprint server API
     """
 
-    def __init__(self, address, port, api_key):
+    def __init__(self, address, api_key, port=None):
         self.host = address
         self.s = requests.Session()
         self.s.headers.update({'X-Api-Key': api_key,
                                'Content-Type': 'application/json'})
 
         # Base address for all the requests
-        self.base_address = 'http://' + address + ':' + str(port)
+        if port:
+            self.base_address = 'http://' + address + ':' + str(port)
+        else:
+            self.base_address = 'http://' + address
 
     def connect_to_printer(self, port=None, baudrate=None, printer_profile=None, save=None, autoconnect=None):
         """
@@ -273,7 +276,7 @@ if __name__ == '__main__':
         # apikey, host, and port are required arguments to communicate with Octoprint
         parser.add_argument('--apikey', help='Octoprint\'s API Key', type=str, required=True)
         parser.add_argument('--host', help='Octoprint host address, port must not be specified here', type=str, required=True)
-        parser.add_argument('--port', help='Port on which Octoprint is running', type=int, required=True)
+        parser.add_argument('--port', help='Port on which Octoprint is running', type=int, required=False)
 
         # Optional arguments
         parser.add_argument('--printer-connected', help='Checks if there is a printer connected', action='store_true')
@@ -330,7 +333,10 @@ if __name__ == '__main__':
         args = parser.parse_args()
 
         # Create the Octoprint interface
-        octo_api = OctoprintAPI(args.host, args.port, args.apikey)
+        if args.port:
+            octo_api = OctoprintAPI(args.host, args.apikey, args.port)
+        else:
+            octo_api = OctoprintAPI(args.host, args.apikey)
 
         # Printer options
         if args.printer_connected:
