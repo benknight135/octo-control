@@ -3,8 +3,7 @@ import argparse
 import sys
 import json
 
-__author__ = 'Andres Torti'
-
+__author__ = 'Andres Torti (Adapted by Ben Knight)'
 
 class OctoprintAPI:
     """
